@@ -25,6 +25,7 @@ class Parse
 
   def self.parse_email(eaddress)
     email = /\w+\@\w+\.\w+/
+
     email.match(eaddress) ? [email.match(eaddress).to_s] : ['Not Found']
     # if address_check.match(emailaddress)
     #   valid_email = [address_check.match(emailaddress).to_s]
@@ -38,7 +39,7 @@ class Parse
     parse_number = {  country: '', area: '', prefix: '', line: '', ext: '' }
     # breaks the passed number into separate strings
     num = numbers.scan(/\d+/)
-    parse_number[:country] = num.shift if num[0] == '1'
+    parse_number[:country] = num.shift if num[0].length <= 2
     parse_number[:area] = num.shift
     parse_number[:prefix] = num.shift
     parse_number[:line] = num.shift
