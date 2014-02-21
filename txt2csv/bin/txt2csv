@@ -1,5 +1,27 @@
 #!/usr/bin/env ruby
-# this first line is how the operating system knows to use ruby to execute this file
-# use chmod oug+x txt2csv to make sure the file is executable
 
-puts "This is where txt2csv will be invoked from the command line."
+require 'thor'
+
+# Command Line Interface for parsers
+class CLI < Thor
+  desc 'analyze', 'analyzes data'
+
+  options %w( prefix -p ) => :boolean
+  options %w( suffix -s ) => :boolean
+  options %w( input -i ) => :string
+
+  def analyze
+    puts 'prefixes!' if options[:p] || options[:prefix]
+    puts 'suffixes' if options[:s] || options[:suffix]
+
+    puts "The file is: #{options[:input]}" if options[:i] || options[:input]
+
+  end
+
+  desc 'convert', 'converts data'
+  def convert
+    puts 'convert'
+  end
+end
+
+CLI.start(ARGV)
