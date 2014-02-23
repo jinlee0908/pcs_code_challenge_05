@@ -8,10 +8,11 @@ require_relative '../lib/analyze'
 
 # This class is to direct files and process to them
 class Commands < Thor
-  options %w( prefix -p ) => :boolean
-  options %w( suffix -s ) => :boolean
+
   class_options %w( input -i ) => :string
   class_options %w( output -o) => :string
+  class_options %w( prefix -p ) => :string 
+  class_options %w( suffix -s ) => :string
 
   desc 'analyze', 'Initate Analyze commands'
   def analyze(*)
@@ -35,11 +36,6 @@ class Commands < Thor
     parsed_names = []
 
     IO.foreach(inputtxt) { |line| parsed_names << line.scan(/[^\t\n]+/)[0] }
-    # File.open(inputtxt) do |file|
-    #  file.each_line do |line|
-    #    parsed_names << line.scan(/[^\t\n]+/)[0]
-    #  end
-    # end
 
     txtline = parsed_names
 
@@ -47,8 +43,41 @@ class Commands < Thor
   end
 
   desc 'convert', 'Initate Convert commands'
-  def convert
-    puts 'This is the convert script'
+  def convert(*)
+    puts 'This is the convert script' 
+
+    inputtxt = options[:input] if options[:i] || options[:input]
+    outputtxt = options[:output] if options[:o] || options[:output]
+    prefixtxt = options[:prefix] if options[:p] || options[:prefix]
+    suffixtxt = options[:suffix] if options[:s] || options[:suffix]
+
+    #inputfile = File.open(inputtxt)
+    prefix_array = []
+    IO.foreach(prefixtxt) { |line| prefix_array << line.scan(/^\S*/)[0] }
+    puts prefix_array.inspect
+
+    suffix_array = []
+    IO.foreach(suffixtxt) { |line| suffix_array << line.scan(/^\S*/)[0] }
+    puts suffix_array.inspect
+
+    parsed_file = Hash.new(0)
+    
+    parsed_file = {name_string:[], phone_string:[], twitter_handle:[], email_address:[] }
+
+    IO.foreach(inputtxt) { |line| 
+      parsed_file[:name_string] << line.scan(/[^\t\n]+/)[0]
+      parsed_file[:phone_string] << line.scan(/[^\t\n]+/)[1]
+      parsed_file[:twitter_handle] << line.scan(/[^\t\n]+/)[2]
+      parsed_file[:email_address] << line.scan(/[^\t\n]+/)[3]
+       }
+    puts parsed_file
+
+    Parse.parse_names(prefix_array,suffix_array,parsed_file[:name_string])
+    Parse.parse_twitter
+    Parse.parse_email
+    Parse.parse_numbers
+    #sufile = File.open(suffixtxt)
+
     # Get the input filename from the command line interface,
     # and open the file for reading
     # Get the prefix and suffix histogram files from the command line
