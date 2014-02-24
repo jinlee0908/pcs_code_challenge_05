@@ -5,6 +5,7 @@
 
 require 'thor'
 require_relative '../lib/analyze'
+require_relative '../lib/parse'
 
 # This class is to direct files and process to them
 class Commands < Thor
@@ -33,13 +34,9 @@ class Commands < Thor
     inputtxt = options[:input] if options[:i] || options[:input]
     outputtxt = options[:output] if options[:o] || options[:output]
 
-    parsed_names = []
+    analyzer = Analysis.new(chosen_option, inputtxt, outputtxt)
+    analyzer.process
 
-    IO.foreach(inputtxt) { |line| parsed_names << line.scan(/[^\t\n]+/)[0] }
-
-    txtline = parsed_names
-
-    Analysis.histogram(chosen_option, txtline, outputtxt)
   end
 
   desc 'convert', 'Initate Convert commands'
@@ -51,33 +48,9 @@ class Commands < Thor
     prefixtxt = options[:prefix] if options[:p] || options[:prefix]
     suffixtxt = options[:suffix] if options[:s] || options[:suffix]
 
-    #inputfile = File.open(inputtxt)
-    prefix_array = []
-    IO.foreach(prefixtxt) { |line| prefix_array << line.scan(/^\S*/)[0] }
-    puts prefix_array.inspect
-
-    suffix_array = []
-    IO.foreach(suffixtxt) { |line| suffix_array << line.scan(/^\S*/)[0] }
-    puts suffix_array.inspect
-
-    parsed_file = Hash.new(0)
+    converter = Parse.new(prefixtxt, suffixtxt, inputtxt, outputtxt)
+    converter.process
     
-    parsed_file = {name_string:[], phone_string:[], twitter_handle:[], email_address:[] }
-
-    IO.foreach(inputtxt) { |line| 
-      parsed_file[:name_string] << line.scan(/[^\t\n]+/)[0]
-      parsed_file[:phone_string] << line.scan(/[^\t\n]+/)[1]
-      parsed_file[:twitter_handle] << line.scan(/[^\t\n]+/)[2]
-      parsed_file[:email_address] << line.scan(/[^\t\n]+/)[3]
-       }
-    puts parsed_file
-
-    Parse.parse_names(prefix_array,suffix_array,parsed_file[:name_string])
-    Parse.parse_twitter
-    Parse.parse_email
-    Parse.parse_numbers
-    #sufile = File.open(suffixtxt)
-
     # Get the input filename from the command line interface,
     # and open the file for reading
     # Get the prefix and suffix histogram files from the command line
@@ -98,18 +71,8 @@ class Commands < Thor
   #  parsed_file = Hash.new(0)
   #  parsed_file = {name_string: '', phone_string: '', twitter_handle: '',
   #  email_address: ''}
-  #
-  #  File.open(inputtxt) do |file|
-  #    file.each_line {|line| results = line.scan(/[^\t\n]+/)
-  #    puts results
-  #
-  #    parsed_file[:name_string] = results[0]
-  #    parsed_file[:phone_string] = results[1]
-  #    parsed_file[:twitter_handle] = results[2]
-  #    parsed_file[:email_address] = results[3]
-  #  }
-  # end
-  #  puts parsed_file
+  
+  
   end
 end
 
