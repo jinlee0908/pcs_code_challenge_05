@@ -30,6 +30,3 @@ end
 
 histogram = Hash[ histogram.sort_by { |word, count| count }.reverse]
 histogram.each { |word, count| puts "#{word} #{count}" }
-
-
-
