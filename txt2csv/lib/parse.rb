@@ -50,7 +50,7 @@ class Parse
     parsed_name = { pre: [], first: [], middle: [], last: [], suffix: [] }
 
     name_string.each do |w|
-      word = w.scan(/([^\s]+)/)
+      word = w.scan(/([^\s]+)/).flatten
       puts "<<<<<<<"
       puts word.inspect
       if suffixes.include? word.last 
@@ -70,9 +70,9 @@ class Parse
       parsed_name[:middle] << (word.shift || word[0] = '')
       puts ">>>>>"
       puts parsed_name.inspect
-    end
-    puts parsed_name.values.inspect
-    parsed_name.values
+      parsed_name.values
+      puts parsed_name.values.inspect
+    end     
   end
 
   def parse_twitter(handle)
@@ -93,6 +93,8 @@ class Parse
     parse_number = {  country: '', area: '', prefix: '', line: '', ext: '' }
     numbers.each do |numbers|
       num = numbers.scan(/\d+/)
+      puts '<<<<<<<<<<'
+      puts num.inspect
       parse_number[:country] = num.shift if num[0] == '1'
       parse_number[:area] = num.shift
       parse_number[:prefix] = num.shift
