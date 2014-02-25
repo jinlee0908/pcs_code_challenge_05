@@ -112,9 +112,3 @@ class Parse
     end
    end
 end
-
-
-#def output(histogram)
- #   File.open(@outputtxt, "w+") do |file|
-  #    histogram.each { |name, count| file.puts "#{name} #{count}" }
-   # end
