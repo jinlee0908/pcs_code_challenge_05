@@ -1,5 +1,76 @@
 #!/usr/bin/env ruby
-# this first line is how the operating system knows to use ruby to execute this file
+# this first line is how the operating system knows to use ruby
+# to execute this file
 # use chmod oug+x txt2csv to make sure the file is executable
 
-puts "This is where txt2csv will be invoked from the command line."
+require 'thor'
+require_relative '../lib/analyze'
+require_relative '../lib/parse'
+
+# This class is to direct files and process to them
+class Commands < Thor
+  class_options %w( input -i ) => :string
+  class_options %w( output -o) => :string
+  class_options %w( prefix -p ) => :string
+  class_options %w( suffix -s ) => :string
+
+  desc 'analyze', 'Initate Analyze commands'
+  def analyze(*)
+    # Get the input filename from the command line interface,
+    # and open the file for reading
+    # For each line in the incoming file,
+    # Split the line on tab
+    # Get the output filename from the command line interface and
+    # open a histogram file for writing
+    # Get the prefix or suffix option from the command line interface
+    # Hand the name field to the analyze method
+    # collect the reverse-sorted histogram returned from the method
+    # output the histogram to the output file.
+    # Close all open files
+
+    chosen_option = options[:prefix] ? :prefix : :suffix
+
+    inputtxt = options[:input] if options[:i] || options[:input]
+    outputtxt = options[:output] if options[:o] || options[:output]
+
+    analyzer = Analysis.new(chosen_option, inputtxt, outputtxt)
+    analyzer.process
+  end
+
+  desc 'convert', 'Initate Convert commands'
+  def convert(*)
+    puts 'This is the convert script'
+
+    inputtxt = options[:input] if options[:i] || options[:input]
+    outputtxt = options[:output] if options[:o] || options[:output]
+    prefixtxt = options[:prefix] if options[:p] || options[:prefix]
+    suffixtxt = options[:suffix] if options[:s] || options[:suffix]
+
+    converter = Parse.new(prefixtxt, suffixtxt, inputtxt, outputtxt)
+    converter.process
+
+    # Get the input filename from the command line interface,
+    # and open the file for reading
+    # Get the prefix and suffix histogram files from the command line
+    # interface and open them.
+    # Read the histogram files to create prefix and suffix words arrays.
+    #
+    # Get the output filename from the command line interface and open a CSV
+    # file for writing
+    # Write the column headers to the file
+    # For each line in the incoming file,
+    # Split the line on tabs,
+    # Hand each field to the appropriate method. Use the word arrays for the
+    # name parser.
+    # collect the arrays returned from the methods
+    # output the concatenated arrays as a string to the CSV file
+    # Close all open files
+
+  #  parsed_file = Hash.new(0)
+  #  parsed_file = {name_string: '', phone_string: '', twitter_handle: '',
+  #  email_address: ''}
+
+  end
+end
+
+Commands.start(ARGV)
